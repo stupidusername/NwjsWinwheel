@@ -1,0 +1,72 @@
+<html>
+<head>
+	<title>ElectronWinwheel</title>
+	<link rel="stylesheet" href="main.css" type="text/css" />
+	<script src='TweenMax.js'></script>
+	<script src='Winwheel.js'></script>
+</head>
+<body>
+	<canvas id='canvas'>
+		Canvas not supported, use another browser.
+	</canvas>
+	<script>
+		// process command line arguments
+		if (nw.App.argv.length < 2) {
+			throw 'Arguments should be of the form: ["value 1", "value 2", ...] n. Where n references the chosen option (starting from 0).';
+		}
+		var options = JSON.parse(nw.App.argv[0]);
+		if (!Array.isArray(options) || options.length < 2) {
+			throw '1st parameter must be an array with at least 2 values.';
+		}
+		var chosenOptionIdx = parseInt(nw.App.argv[1]);
+		if (!Number.isInteger(chosenOptionIdx) || chosenOptionIdx < 0 || chosenOptionIdx >= options.length) {
+			throw '2nd parameter must be an integer between 0 and ' + (options.length - 1) + '.';
+		}
+
+		// prepare segments for winwheel
+		segments = [];
+		options.forEach((element) => {
+			segments.push({'text': element});
+		})
+
+		var segmentAngle = 360 / segments.length;
+		var stopAt = Math.floor(segmentAngle * chosenOptionIdx) + 1 + Math.floor(Math.random() * (Math.ceil(segmentAngle) - 1));
+
+		var canvas = document.getElementById('canvas');
+		canvas.width = document.body.clientWidth;
+		canvas.height = document.body.clientHeight;
+	
+		var theWheel = new Winwheel({
+			'numSegments'  : segments.length,         // Number of segments
+			'outerRadius'  : 212,       // The size of the wheel.
+			'textFontSize' : 28,        // Font size.
+			'segments'     : segments,
+			'animation' :               // Definition of the animation
+			{
+				'stopAngle'   : stopAt,
+				'type'     : 'spinToStop',
+				'duration' : 5,
+				'spins'    : 8,
+				'callbackFinished' : 'alertPrize()'
+			},
+			'pointerGuide' :
+			{
+				'display'	: true,
+				'strokeStyle'	: 'red',
+				'lineWidth'	: 3
+			}
+		});
+
+		// Called when the animation has finished.
+		function alertPrize()
+		{
+			// Get the segment indicated by the pointer on the wheel background which is at 0 degrees.
+			var winningSegment = theWheel.getIndicatedSegment();
+
+			// Close window
+			nw.App.quit();
+		}
+		theWheel.startAnimation();
+	</script>
+</body>
+</html>
