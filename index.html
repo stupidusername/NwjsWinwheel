@@ -23,24 +23,32 @@
 			throw '2nd parameter must be an integer between 0 and ' + (options.length - 1) + '.';
 		}
 
+		var docWidth = document.body.clientWidth;
+		var docHeight = document.body.clientHeight;
+
+		var canvas = document.getElementById('canvas');
+		canvas.width = docWidth;
+		canvas.height = docHeight;
+
+		var outerRadius = Math.min(docWidth, docHeight) * 0.45
+
 		// prepare segments for winwheel
 		segments = [];
-		options.forEach((element) => {
-			segments.push({'text': element});
+		options.forEach((element, index) => {
+			var fillStyle = index % 2 ? '#4A148C' : '#7B1FA2';
+			segments.push({fillStyle: fillStyle, strokeStyle: fillStyle, text: element});
 		})
 
 		var segmentAngle = 360 / segments.length;
 		var stopAt = Math.floor(segmentAngle * chosenOptionIdx) + 1 + Math.floor(Math.random() * (Math.ceil(segmentAngle) - 1));
-
-		var canvas = document.getElementById('canvas');
-		canvas.width = document.body.clientWidth;
-		canvas.height = document.body.clientHeight;
 	
 		var theWheel = new Winwheel({
 			'numSegments'  : segments.length,         // Number of segments
-			'outerRadius'  : 212,       // The size of the wheel.
-			'textFontSize' : 28,        // Font size.
+			'outerRadius'  : outerRadius,       // The size of the wheel
+			'textFillStyle': 'white',
+			'textFontSize' : 28,        // Font size
 			'segments'     : segments,
+			'lineWidth'    : 0,
 			'animation' :               // Definition of the animation
 			{
 				'stopAngle'   : stopAt,
@@ -57,14 +65,14 @@
 			}
 		});
 
-		// Called when the animation has finished.
+		// Called when the animation has finished
 		function alertPrize()
 		{
-			// Get the segment indicated by the pointer on the wheel background which is at 0 degrees.
+			// Get the segment indicated by the pointer on the wheel background which is at 0 degrees
 			var winningSegment = theWheel.getIndicatedSegment();
 
 			// Close window
-			nw.App.quit();
+			setTimeout(function() { nw.App.quit(); }, 5000);
 		}
 		theWheel.startAnimation();
 	</script>
