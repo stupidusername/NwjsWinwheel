@@ -43,19 +43,20 @@
 		var stopAt = Math.floor(segmentAngle * chosenOptionIdx) + 1 + Math.floor(Math.random() * (Math.ceil(segmentAngle) - 1));
 	
 		var theWheel = new Winwheel({
-			'numSegments'  : segments.length,         // Number of segments
-			'outerRadius'  : outerRadius,       // The size of the wheel
+			'numSegments'  : segments.length,
+			'outerRadius'  : outerRadius,
 			'textFillStyle': 'white',
-			'textFontSize' : 28,        // Font size
+			'textFontSize' : 28,
 			'segments'     : segments,
 			'lineWidth'    : 0,
-			'animation' :               // Definition of the animation
+			'animation' :
 			{
-				'stopAngle'   : stopAt,
+				'stopAngle': stopAt,
 				'type'     : 'spinToStop',
-				'duration' : 5,
+				'duration' : 15,
 				'spins'    : 8,
-				'callbackFinished' : 'alertPrize()'
+				'callbackFinished' : 'alertPrize()',
+				'easing'   : 'Power3.easeInOut'
 			},
 			'pointerGuide' :
 			{
@@ -74,7 +75,7 @@
 			// Close window
 			setTimeout(function() { nw.App.quit(); }, 5000);
 		}
-		theWheel.startAnimation();
+		setTimeout(function() { theWheel.startAnimation(); }, 1000);
 	</script>
 </body>
 </html>
