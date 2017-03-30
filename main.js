@@ -3,6 +3,4 @@ process.on('uncaughtException', (err) => {
 	process.exit(1)
 })
 
-nw.Window.open('index.html', {}, function(win) {
-	win.enterFullscreen()
-})
+nw.Window.open('index.html', {fullscreen: true})
