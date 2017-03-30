@@ -15,8 +15,8 @@
 			throw 'Arguments should be of the form: ["value 1", "value 2", ...] n. Where n references the chosen option (starting from 0).';
 		}
 		var options = JSON.parse(nw.App.argv[0]);
-		if (!Array.isArray(options) || options.length < 2) {
-			throw '1st parameter must be an array with at least 2 values.';
+		if (!Array.isArray(options) || options.length < 2 || options.length % 2) {
+			throw '1st parameter must be an array with at least 2 values and its length must be and even number.';
 		}
 		var chosenOptionIdx = parseInt(nw.App.argv[1]);
 		if (!Number.isInteger(chosenOptionIdx) || chosenOptionIdx < 0 || chosenOptionIdx >= options.length) {
@@ -30,25 +30,29 @@
 		canvas.width = docWidth;
 		canvas.height = docHeight;
 
-		var outerRadius = Math.min(docWidth, docHeight) * 0.45
+		var outerRadius = Math.min(docWidth, docHeight) * 0.45;
+		var lineWidth = outerRadius * 0.01;
+		var textFontSize = outerRadius * 0.075;
 
 		// prepare segments for winwheel
 		segments = [];
 		options.forEach((element, index) => {
-			var fillStyle = index % 2 ? '#4A148C' : '#7B1FA2';
-			segments.push({fillStyle: fillStyle, strokeStyle: fillStyle, text: element});
+			var fillStyle = index % 2 ? '#673AB7' : '#4527A0';
+			segments.push({fillStyle: fillStyle, strokeStyle: '#311B92', text: element});
 		})
 
 		var segmentAngle = 360 / segments.length;
 		var stopAt = Math.floor(segmentAngle * chosenOptionIdx) + 1 + Math.floor(Math.random() * (Math.ceil(segmentAngle) - 1));
 	
 		var theWheel = new Winwheel({
-			'numSegments'  : segments.length,
-			'outerRadius'  : outerRadius,
-			'textFillStyle': 'white',
-			'textFontSize' : 28,
-			'segments'     : segments,
-			'lineWidth'    : 0,
+			'numSegments'   : segments.length,
+			'outerRadius'   : outerRadius,
+			'textFillStyle' : 'white',
+			'textFontFamily': 'Chunkfive',
+			'textFontWeight': 'normal',
+			'textFontSize'  : textFontSize,
+			'segments'      : segments,
+			'lineWidth'     : lineWidth,
 			'animation' :
 			{
 				'stopAngle': stopAt,
@@ -57,12 +61,6 @@
 				'spins'    : 8,
 				'callbackFinished' : 'alertPrize()',
 				'easing'   : 'Power3.easeInOut'
-			},
-			'pointerGuide' :
-			{
-				'display'	: true,
-				'strokeStyle'	: 'red',
-				'lineWidth'	: 3
 			}
 		});
 

@@ -1,4 +1,8 @@
+@font-face {
+	font-family: Chunkfive;
+	src: url("Chunkfive.otf");
+}
 body {
 	margin: 0px;
-	background-color: #283593;
+	background-color: #121A4F;
 }
