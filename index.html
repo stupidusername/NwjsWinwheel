@@ -2,6 +2,8 @@
 <head>
 	<title>ElectronWinwheel</title>
 	<link rel="stylesheet" href="main.css" type="text/css" />
+	<script src='jquery-3.2.0.js'></script>
+	<script src='jQuery-FontSpy.js'></script>
 	<script src='TweenMax.js'></script>
 	<script src='Winwheel.js'></script>
 </head>
@@ -44,26 +46,32 @@
 		var segmentAngle = 360 / segments.length;
 		var stopAt = Math.floor(segmentAngle * chosenOptionIdx) + 1 + Math.floor(Math.random() * (Math.ceil(segmentAngle) - 1));
 	
-		var theWheel = new Winwheel({
-			'numSegments'   : segments.length,
-			'outerRadius'   : outerRadius,
-			'textFillStyle' : 'white',
-			'textFontFamily': 'Chunkfive',
-			'textFontWeight': 'normal',
-			'textFontSize'  : textFontSize,
-			'segments'      : segments,
-			'lineWidth'     : lineWidth,
-			'animation' :
-			{
-				'stopAngle': stopAt,
-				'type'     : 'spinToStop',
-				'duration' : 15,
-				'spins'    : 8,
-				'callbackFinished' : 'alertPrize()',
-				'easing'   : 'Power3.easeInOut'
+		fontSpy('Chunkfive', {
+			success: function() {
+				var theWheel = new Winwheel({
+					'numSegments'   : segments.length,
+					'outerRadius'   : outerRadius,
+					'textFillStyle' : 'white',
+					'textFontFamily': 'Chunkfive',
+					'textFontWeight': 'normal',
+					'textFontSize'  : textFontSize,
+					'segments'      : segments,
+					'lineWidth'     : lineWidth,
+					'animation' :
+					{
+						'stopAngle': stopAt,
+						'type'     : 'spinToStop',
+						'duration' : 15,
+						'spins'    : 8,
+						'callbackFinished' : 'alertPrize()',
+						'easing'   : 'Power3.easeInOut'
+					}
+				});
+				setTimeout(function() { theWheel.startAnimation(); }, 1000);
 			}
 		});
 
+		
 		// Called when the animation has finished
 		function alertPrize()
 		{
@@ -73,7 +81,6 @@
 			// Close window
 			setTimeout(function() { nw.App.quit(); }, 5000);
 		}
-		setTimeout(function() { theWheel.startAnimation(); }, 1000);
 	</script>
 </body>
 </html>
