@@ -44,7 +44,7 @@
 		})
 
 		var segmentAngle = 360 / segments.length;
-		var stopAt = Math.floor(segmentAngle * chosenOptionIdx) + 1 + Math.floor(Math.random() * (Math.ceil(segmentAngle) - 1));
+		var stopAt = Math.floor(segmentAngle * chosenOptionIdx) + 1 + Math.floor(Math.random() * (Math.ceil(segmentAngle) - 1)) - 90;
 	
 		fontSpy('Chunkfive', {
 			success: function() {
