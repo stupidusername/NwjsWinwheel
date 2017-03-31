@@ -29,6 +29,7 @@
 		var docHeight = document.body.clientHeight;
 
 		var canvas = document.getElementById('canvas');
+		var context = canvas.getContext('2d');
 		canvas.width = docWidth;
 		canvas.height = docHeight;
 
@@ -63,21 +64,44 @@
 						'type'     : 'spinToStop',
 						'duration' : 15,
 						'spins'    : 8,
+						'easing'   : 'Power3.easeInOut',
 						'callbackFinished' : 'alertPrize()',
-						'easing'   : 'Power3.easeInOut'
+						'callbackAfter'    : 'drawPointer()',
 					}
 				});
+				drawPointer();
 				setTimeout(function() { theWheel.startAnimation(); }, 1000);
 			}
 		});
 
-		
+		// Prepare pointer values
+		var pointerStyle = '#2196F3';
+		var pointerWidth = outerRadius * 0.2;
+		var pointerHeight = pointerWidth;
+		var pointerInitialPosX = docWidth / 2 + outerRadius * 0.9
+		var pointerInitialPosY = docHeight / 2;
+		var pointerPositions = [
+			[pointerInitialPosX, pointerInitialPosY],
+			[pointerInitialPosX + pointerWidth, pointerInitialPosY - pointerHeight / 2],
+			[pointerInitialPosX + pointerWidth, pointerInitialPosY + pointerHeight / 2]
+		];
+
+		// Called after the is drawn on each animation loop
+		function drawPointer() {
+			context.strokeStyle = pointerStyle;
+			context.fillStyle   = pointerStyle;
+			context.lineWidth   = 1;
+			context.beginPath();
+			context.moveTo(pointerPositions[0][0], pointerPositions[0][1]);
+			context.lineTo(pointerPositions[1][0], pointerPositions[1][1]);
+			context.lineTo(pointerPositions[2][0], pointerPositions[2][1]);
+			context.stroke();
+			context.fill();
+		}
+
 		// Called when the animation has finished
 		function alertPrize()
 		{
-			// Get the segment indicated by the pointer on the wheel background which is at 0 degrees
-			var winningSegment = theWheel.getIndicatedSegment();
-
 			// Close window
 			setTimeout(function() { nw.App.quit(); }, 5000);
 		}
