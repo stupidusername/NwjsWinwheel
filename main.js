@@ -1,6 +1,6 @@
 process.on('uncaughtException', (err) => {
 	process.stdout.write(err + '\n')
-	process.exit(1)
+	process.exit()
 })
 
 nw.Window.open('index.html', {fullscreen: true})
