@@ -37,6 +37,18 @@
 		var lineWidth = outerRadius * 0.01;
 		var textFontSize = outerRadius * 0.075;
 
+		// Prepare pointer values
+		var pointerStyle = '#2196F3';
+		var pointerWidth = outerRadius * 0.1;
+		var pointerHeight = pointerWidth;
+		var pointerInitialPosX = docWidth / 2 + outerRadius * 0.95
+		var pointerInitialPosY = docHeight / 2;
+		var pointerPositions = [
+			[pointerInitialPosX, pointerInitialPosY],
+			[pointerInitialPosX + pointerWidth, pointerInitialPosY - pointerHeight / 2],
+			[pointerInitialPosX + pointerWidth, pointerInitialPosY + pointerHeight / 2]
+		];
+
 		// prepare segments for winwheel
 		segments = [];
 		options.forEach((element, index) => {
@@ -46,6 +58,8 @@
 
 		var segmentAngle = 360 / segments.length;
 		var stopAt = Math.floor(segmentAngle * chosenOptionIdx) + 1 + Math.floor(Math.random() * (Math.ceil(segmentAngle) - 1)) - 90;
+
+		var pinStyle = '#FFEA00';
 	
 		fontSpy('Chunkfive', {
 			success: function() {
@@ -58,6 +72,15 @@
 					'textFontSize'  : textFontSize,
 					'segments'      : segments,
 					'lineWidth'     : lineWidth,
+					'pins' :
+					{
+						'number'      : segments.length,
+						'outerRadius' : outerRadius * 0.01,
+						'fillStyle'   : pinStyle,
+						'strokeStyle' : pinStyle,
+						'lineWidth'   : 0,
+						'margin'      : outerRadius * 0.01
+					},
 					'animation' :
 					{
 						'stopAngle': stopAt,
@@ -74,28 +97,17 @@
 			}
 		});
 
-		// Prepare pointer values
-		var pointerStyle = '#2196F3';
-		var pointerWidth = outerRadius * 0.2;
-		var pointerHeight = pointerWidth;
-		var pointerInitialPosX = docWidth / 2 + outerRadius * 0.9
-		var pointerInitialPosY = docHeight / 2;
-		var pointerPositions = [
-			[pointerInitialPosX, pointerInitialPosY],
-			[pointerInitialPosX + pointerWidth, pointerInitialPosY - pointerHeight / 2],
-			[pointerInitialPosX + pointerWidth, pointerInitialPosY + pointerHeight / 2]
-		];
-
 		// Called after the is drawn on each animation loop
 		function drawPointer() {
-			context.strokeStyle = pointerStyle;
 			context.fillStyle   = pointerStyle;
-			context.lineWidth   = 1;
 			context.beginPath();
 			context.moveTo(pointerPositions[0][0], pointerPositions[0][1]);
 			context.lineTo(pointerPositions[1][0], pointerPositions[1][1]);
 			context.lineTo(pointerPositions[2][0], pointerPositions[2][1]);
-			context.stroke();
+			context.fill();
+			context.beginPath();
+			context.arc(docWidth / 2, docHeight / 2, outerRadius * 0.025, 0, 2 * Math.PI, false);
+			context.fillStyle = pointerStyle;
 			context.fill();
 		}
 
