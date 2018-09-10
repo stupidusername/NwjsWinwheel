@@ -12,7 +12,17 @@
 		Canvas not supported, use another browser.
 	</canvas>
 	<script>
-		// process command line arguments
+		// Colors
+		var pointerStyle = '#2196F3';
+		var pinStyle = '#FFEA00';
+		var segFillStyle1 = '#673AB7';
+		var segFillStyle2 = '#4527A0';
+		var segStrokeStyle = '#311B92';
+		var prizeAlertFillStyle = '#F0D100';
+		var prizeAlertStrokeStyle = '#DB9400';
+		var prizeAlertTextStyle = '#000000';
+
+		// Process command line arguments
 		if (nw.App.argv.length < 2) {
 			throw 'Arguments should be of the form: ["value 1", "value 2", ...] n. Where n references the chosen option (starting from 0).';
 		}
@@ -38,7 +48,6 @@
 		var textFontSize = outerRadius * 0.075;
 
 		// Prepare pointer values
-		var pointerStyle = '#2196F3';
 		var pointerWidth = outerRadius * 0.1;
 		var pointerHeight = pointerWidth;
 		var pointerInitialPosX = docWidth / 2 + outerRadius * 0.95
@@ -49,18 +58,17 @@
 			[pointerInitialPosX + pointerWidth, pointerInitialPosY + pointerHeight / 2]
 		];
 
-		// prepare segments for winwheel
+		// Prepare segments for winwheel
 		segments = [];
 		options.forEach((element, index) => {
-			var fillStyle = index % 2 ? '#673AB7' : '#4527A0';
-			segments.push({fillStyle: fillStyle, strokeStyle: '#311B92', text: element});
+			var fillStyle = index % 2 ? segFillStyle1 : segFillStyle2;
+			segments.push({fillStyle: fillStyle, strokeStyle: segStrokeStyle, text: element});
 		})
 
 		var segmentAngle = 360 / segments.length;
 		var stopAt = Math.floor(segmentAngle * chosenOptionIdx) + 1 + Math.floor(Math.random() * (Math.ceil(segmentAngle) - 1)) - 90;
 
-		var pinStyle = '#FFEA00';
-	
+		// Start winwheel after the font is loaded
 		fontSpy('Chunkfive', {
 			success: function() {
 				var theWheel = new Winwheel({
@@ -97,9 +105,9 @@
 			}
 		});
 
-		// Called after the is drawn on each animation loop
+		// Called after the winwheel is drawn on each animation loop
 		function drawPointer() {
-			context.fillStyle   = pointerStyle;
+			context.fillStyle = pointerStyle;
 			context.beginPath();
 			context.moveTo(pointerPositions[0][0], pointerPositions[0][1]);
 			context.lineTo(pointerPositions[1][0], pointerPositions[1][1]);
@@ -114,8 +122,82 @@
 		// Called when the animation has finished
 		function alertPrize()
 		{
-			// Close window
-			setTimeout(function() { nw.App.quit(); }, 5000);
+			// Show prize alert
+			setTimeout(function() {
+				// Draw rect
+				rectWidth = outerRadius * 2;
+				rectHeight = outerRadius;
+				x = (canvas.width - rectWidth) / 2;
+				y = (canvas.height - rectHeight) / 2;
+				radius = Math.min(rectWidth, rectHeight) * 0.1;
+				context.fillStyle = prizeAlertFillStyle;
+				context.strokeStyle = prizeAlertStrokeStyle;
+				context.lineWidth = rectWidth * 0.01;
+				roundRect(context, x, y, rectWidth, rectHeight, radius, true, false);
+				roundRect(context, x, y, rectWidth, rectHeight, radius);
+				// Write text
+				fontSize = Math.min(canvas.width, canvas.height) * 0.0725;
+				context.fillStyle = prizeAlertTextStyle;
+				context.textAlign = 'center';
+				context.textBaseline = 'middle';
+				context.font = fontSize + 'px Chunkfive';
+				context.fillText('GANASTE!!!', canvas.width / 2, canvas.height / 2 - fontSize);
+				context.fillText(options[chosenOptionIdx], canvas.width / 2, canvas.height / 2 + fontSize);
+				// Close window
+				setTimeout(function() { nw.App.quit(); }, 5000);
+			}, 2000);
+		}
+
+		/**
+		* Draws a rounded rectangle using the current state of the canvas
+		* If you omit the last three params, it will draw a rectangle
+		* outline with a 5 pixel border radius
+		* @param {CanvasRenderingContext2D} ctx
+		* @param {Number} x The top left x coordinate
+		* @param {Number} y The top left y coordinate
+		* @param {Number} width The width of the rectangle
+		* @param {Number} height The height of the rectangle
+		* @param {Number} [radius = 5] The corner radius; It can also be an object
+		*                 to specify different radii for corners
+		* @param {Number} [radius.tl = 0] Top left
+		* @param {Number} [radius.tr = 0] Top right
+		* @param {Number} [radius.br = 0] Bottom right
+		* @param {Number} [radius.bl = 0] Bottom left
+		* @param {Boolean} [fill = false] Whether to fill the rectangle
+		* @param {Boolean} [stroke = true] Whether to stroke the rectangle
+		*/
+		function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
+			if (typeof stroke == 'undefined') {
+				stroke = true;
+			}
+			if (typeof radius === 'undefined') {
+				radius = 5;
+			}
+			if (typeof radius === 'number') {
+				radius = {tl: radius, tr: radius, br: radius, bl: radius};
+			} else {
+				var defaultRadius = {tl: 0, tr: 0, br: 0, bl: 0};
+				for (var side in defaultRadius) {
+					radius[side] = radius[side] || defaultRadius[side];
+				}
+			}
+			ctx.beginPath();
+			ctx.moveTo(x + radius.tl, y);
+			ctx.lineTo(x + width - radius.tr, y);
+			ctx.quadraticCurveTo(x + width, y, x + width, y + radius.tr);
+			ctx.lineTo(x + width, y + height - radius.br);
+			ctx.quadraticCurveTo(x + width, y + height, x + width - radius.br, y + height);
+			ctx.lineTo(x + radius.bl, y + height);
+			ctx.quadraticCurveTo(x, y + height, x, y + height - radius.bl);
+			ctx.lineTo(x, y + radius.tl);
+			ctx.quadraticCurveTo(x, y, x + radius.tl, y);
+			ctx.closePath();
+			if (fill) {
+				ctx.fill();
+			}
+			if (stroke) {
+				ctx.stroke();
+			}
 		}
 	</script>
 </body>
