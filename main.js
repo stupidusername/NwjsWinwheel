@@ -5,14 +5,14 @@ process.on('uncaughtException', (err) => {
 
 var dimensions = null
 var position = null
-if (nw.App.argv.length >= 3) {
-	dimensions = JSON.parse(nw.App.argv[2])
+if (nw.App.argv.length >= 4) {
+	dimensions = JSON.parse(nw.App.argv[3])
 	if (!Array.isArray(dimensions) || dimensions.length != 2 || !Number.isInteger(dimensions[0]) || !Number.isInteger(dimensions[1])) {
 		throw '3rd parameter must be an array of the form [width, height].'
 	}
 }
-if (nw.App.argv.length >= 4) {
-	position = JSON.parse(nw.App.argv[3])
+if (nw.App.argv.length >= 5) {
+	position = JSON.parse(nw.App.argv[4])
 	if (!Array.isArray(position) || position.length != 2 || !Number.isInteger(position[0]) || !Number.isInteger(position[1])) {
 		throw '4th parameter must be an array of the form [x, y].'
 	}
